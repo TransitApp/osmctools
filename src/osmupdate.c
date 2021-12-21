@@ -179,6 +179,7 @@ const char* helptext=
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 typedef enum {false= 0,true= 1} bool;
 typedef uint8_t byte;
@@ -577,8 +578,10 @@ exit(errno);  // (thanks to Ben Konrath)
   exit_status = pclose(fp);
   if(exit_status==-1)
 exit(errno);  // (thanks to Ben Konrath)
-  if(exit_status>0)
+  if(WIFSIGNALED(exit_status)) {
+    PINFOv("Shell command terminated with signal %d",WTERMSIG(exit_status))
 exit(exit_status);
+    }
   if(loglevel>=2)
     PINFOv("Got shell command result:\n%s",result)
   }  // end   shell_command()
