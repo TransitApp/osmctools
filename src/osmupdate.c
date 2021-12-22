@@ -181,7 +181,13 @@ const char* helptext=
 #include <sys/stat.h>
 #include <sys/wait.h>
 
+#if defined(__cplusplus)
+#define CONST_CAST(type_,exp_) const_cast<type_>(exp_)
+#else
+#define CONST_CAST(type_,exp_) exp_
 typedef enum {false= 0,true= 1} bool;
+#endif
+
 typedef uint8_t byte;
 typedef unsigned int uint;
 #define isdig(x) isdigit((unsigned char)(x))
@@ -1158,7 +1164,7 @@ return 0;
         loglevel==0) {  // test mode - if not given already
       char* sp;
 
-      sp= strchr(a,'=');
+      sp= CONST_CAST(char*,strchr(a,'='));
       if(sp!=NULL) loglevel= sp[1]-'0'; else loglevel= 1;
       if(loglevel<1) loglevel= 1;
       if(loglevel>MAXLOGLEVEL) loglevel= MAXLOGLEVEL;
@@ -1544,7 +1550,7 @@ return 1;
     }
 
   // process remaining files which may still wait in the cache;
-  process_changefile(0,0,0);
+  process_changefile(cft_UNKNOWN,0,0);
 
   /* create requested output file */ {
     char master_cachefile_name[400];
